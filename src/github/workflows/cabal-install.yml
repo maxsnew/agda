@@ -54,7 +54,8 @@ jobs:
     #     # Use the versions preinstalled in the virtual environment, if possible.
 
     env:
-      FLAGS: "-O0 -f enable-cluster-counting"
+      FLAGS: "-O0 -f enable-cluster-counting --enable-executable-dynamic"
+        # Issue #7163: does Setup.hs work with dynamic linking?
 
     steps:
     - uses: actions/checkout@v4
@@ -70,7 +71,7 @@ jobs:
     #     cabal-version: ${{ matrix.cabal-ver }}
     #     cabal-update:  true
 
-    # 2023-08-21: skipping setup does no work out of the box
+    # 2023-08-21: skipping setup does not work out of the box
     # since then cabal uses the XDG directory structure.
     # In particular, the ~/.cabal/store is somewhere else.
     # A workaround is to create the .cabal directory.

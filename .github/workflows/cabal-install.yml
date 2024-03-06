@@ -22,7 +22,7 @@ jobs:
         access_token: ${{ github.token }}
   cabal-install:
     env:
-      FLAGS: -O0 -f enable-cluster-counting
+      FLAGS: -O0 -f enable-cluster-counting --enable-executable-dynamic
     needs: auto-cancel
     runs-on: ubuntu-latest
     steps:
