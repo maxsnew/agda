@@ -54,7 +54,8 @@ jobs:
     #     # Use the versions preinstalled in the virtual environment, if possible.
 
     env:
-      FLAGS: "-O0 -f enable-cluster-counting --enable-executable-dynamic"
+      FLAGS: "-O0 -f enable-cluster-counting"
+      LFLAGS: "--enable-executable-dynamic"
         # Issue #7163: does Setup.hs work with dynamic linking?
 
     steps:
@@ -94,7 +95,7 @@ jobs:
 
     - name: Configure the build plan
       run: |
-        cabal configure ${FLAGS}
+        cabal configure ${FLAGS} ${LFLAGS}
         cabal build --dry-run
       # cabal build --dry-run creates dist-newstyle/cache/plan.json
 
@@ -102,7 +103,7 @@ jobs:
       uses: actions/cache/restore@v4
       id: cache
       env:
-        key: cabal-install.yml-${{ runner.os }}-ghc-${{ env.GHC_VER }}-cabal-${{ env.CABAL_VER }}
+        key: cabal-install.yml-${{ runner.os }}-ghc-${{ env.GHC_VER }}-cabal-${{ env.CABAL_VER }}${{ env.LFLAGS }}
       with:
         path: &cache_path ~/.cabal/store
         # ${{ steps.setup-haskell.outputs.cabal-store }}
@@ -117,7 +118,7 @@ jobs:
 
     - name: Install Agda
       run: |
-        cabal install ${FLAGS}
+        cabal install ${FLAGS} ${LFLAGS}
 
     - name: Save cache
       uses: actions/cache/save@v4

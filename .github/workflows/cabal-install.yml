@@ -22,7 +22,8 @@ jobs:
         access_token: ${{ github.token }}
   cabal-install:
     env:
-      FLAGS: -O0 -f enable-cluster-counting --enable-executable-dynamic
+      FLAGS: -O0 -f enable-cluster-counting
+      LFLAGS: --enable-executable-dynamic
     needs: auto-cancel
     runs-on: ubuntu-latest
     steps:
@@ -41,11 +42,11 @@ jobs:
         echo "CABAL_VER=${CABAL_VER}"   >> ${GITHUB_ENV}
     - name: Configure the build plan
       run: |
-        cabal configure ${FLAGS}
+        cabal configure ${FLAGS} ${LFLAGS}
         cabal build --dry-run
     - env:
         key: cabal-install.yml-${{ runner.os }}-ghc-${{ env.GHC_VER }}-cabal-${{ env.CABAL_VER
-          }}
+          }}${{ env.LFLAGS }}
       id: cache
       name: Restore cached dependencies
       uses: actions/cache/restore@v4
@@ -59,7 +60,7 @@ jobs:
         cabal build --only-dependencies
     - name: Install Agda
       run: |
-        cabal install ${FLAGS}
+        cabal install ${FLAGS} ${LFLAGS}
     - if: ${{ always() && (steps.cache.outputs.cache-hit != 'true') }}
       name: Save cache
       uses: actions/cache/save@v4
