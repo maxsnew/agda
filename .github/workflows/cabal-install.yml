@@ -23,7 +23,6 @@ jobs:
   cabal-install:
     env:
       FLAGS: -O0 -f enable-cluster-counting
-      LFLAGS: --enable-executable-dynamic
     needs: auto-cancel
     runs-on: ubuntu-latest
     steps:
@@ -32,6 +31,7 @@ jobs:
       run: |
         mkdir -p ~/.cabal
         cabal update
+        cabal user-config update --augment="executable-dynamic: True"
     - name: Environment settings based on the Haskell setup
       run: |
         GHC_VER=$(ghc --numeric-version)
@@ -46,7 +46,7 @@ jobs:
         cabal build --dry-run
     - env:
         key: cabal-install.yml-${{ runner.os }}-ghc-${{ env.GHC_VER }}-cabal-${{ env.CABAL_VER
-          }}${{ env.LFLAGS }}
+          }}${{ env.LFLAGS }}-1
       id: cache
       name: Restore cached dependencies
       uses: actions/cache/restore@v4
