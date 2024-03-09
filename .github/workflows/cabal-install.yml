@@ -22,7 +22,8 @@ jobs:
         access_token: ${{ github.token }}
   cabal-install:
     env:
-      FLAGS: -O0 -f enable-cluster-counting
+      FLAGS: -O0
+    name: ${{ matrix.os }} dyn ${{ matrix.dynamic }}
     needs: auto-cancel
     runs-on: ${{ matrix.os }}
     steps:
@@ -43,16 +44,20 @@ jobs:
         echo "GHC_VER=${GHC_VER}"       >> "${GITHUB_ENV}"
         echo "CABAL_VER=${CABAL_VER}"   >> "${GITHUB_ENV}"
     - if: matrix.dynamic == 'cabal-config'
-      name: Augment cabal config
+      name: Augment cabal config with executable-dynamic
       run: |
         cabal user-config update --augment="executable-dynamic: True"
     - if: matrix.dynamic == 'command-line'
-      name: Command-line argument --enable-executable-dynamic
+      name: Cabal config with --enable-executable-dynamic
       run: |
         echo "LFLAGS=--enable-executable-dynamic" >> "${GITHUB_ENV}"
+    - if: runner.os != 'Windows'
+      name: Cabal flag enable-cluster-counting
+      run: |
+        echo "CFLAGS=-f enable-cluster-counting"  >> "${GITHUB_ENV}"
     - name: Configure the build plan
       run: |
-        cabal configure ${FLAGS} ${LFLAGS}
+        cabal configure ${FLAGS} ${CFLAGS} ${LFLAGS}
         cabal build --dry-run
     - env:
         key: cabal-install.yml-${{ runner.os }}-ghc-${{ env.GHC_VER }}-cabal-${{ env.CABAL_VER
@@ -70,7 +75,7 @@ jobs:
         cabal build --only-dependencies
     - name: Install Agda
       run: |
-        cabal install ${FLAGS} ${LFLAGS}
+        cabal install ${FLAGS} ${CFLAGS} ${LFLAGS}
     - name: Agda version
       run: |
         agda --version
