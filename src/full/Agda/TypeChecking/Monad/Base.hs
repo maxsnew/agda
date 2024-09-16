@@ -4980,7 +4980,7 @@ data TypeError
         | RepeatedVariablesInPattern (List1 C.Name)
         | GeneralizeNotSupportedHere A.QName
         | GeneralizedVarInLetOpenedModule A.QName
-        | MultipleFixityDecls [(C.Name, [Fixity'])]
+        | MultipleFixityDecls (List1 (C.Name, List2 Fixity'))
         | MultiplePolarityPragmas [C.Name]
     -- Concrete to Abstract errors
         | DeclarationsAfterTopLevelModule
