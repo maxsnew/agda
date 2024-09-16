@@ -4424,7 +4424,7 @@ data Warning
     -- ^ Pragma 'String' with name 'C.QName' that is not an unambiguous projection or function.
   | NoMain TopLevelModuleName
     -- ^ Compiler run on module that does not have a @main@ function.
-  | NotInScopeW [C.QName]
+  | NotInScopeW C.QName
     -- ^ Out of scope error we can recover from.
   | UnsupportedIndexedMatch Doc
     -- ^ Was not able to compute a full equivalence when splitting.
@@ -4961,7 +4961,7 @@ data TypeError
         | AbstractConstructorNotInScope A.QName
         | CopatternHeadNotProjection C.QName
         | NotAllowedInDotPatterns NotAllowedInDotPatterns
-        | NotInScope [C.QName]
+        | NotInScope C.QName
         | NoSuchModule C.QName
         | AmbiguousName C.QName AmbiguousNameReason
         | AmbiguousModule C.QName (List1 A.ModuleName)
